@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %} Discovering World Music {% endblock %}
+
+{% block content %}
+    <form action = '{{ url_for("landing") }}' method = 'POST'>
+        {{ form.country.label }}: {{ form.country }} {{ form.submit }}
+        {{ form.csrf_token }}
+    </form> 
+{% endblock %}
