@@ -7,3 +7,9 @@ class CountryForm(FlaskForm):
     country = SelectField('Country', validators = [InputRequired()], 
         choices = country_ids.keys())
     submit = SubmitField('Submit')
+
+class GeneratePlaylistForm(FlaskForm):
+    generate = SubmitField('Generate')
+
+class AccountForm(FlaskForm):
+    account = SubmitField('Switch Accounts')
