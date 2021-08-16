@@ -21,6 +21,15 @@ def landing():
         session['Country'] = form.country.data
         return redirect('/country=' + form.country.data)
     
+    # If authorization was rejected, return to landing page with an alert
+    if 'alert' in session:
+        session.pop('alert')
+        return render_template('landing.html', 
+            alert = True, 
+            form = form, 
+            countries = country_ids.keys()
+        )
+        
     # If not submitted, return the landing page with the form
     return render_template('landing.html', 
         form = form, 
