@@ -7,4 +7,12 @@
         {{ form.country.label }}: {{ form.country }} {{ form.submit }}
         {{ form.csrf_token }}
     </form> 
+
+    {% if alert %}
+        <div class = 'alert alert-warning alert-dismissible fade show' role = 'alert'>
+            Grant access to Diversify in your Spotify account next time, and we 
+            can generate a playlist for you!
+        </div>
+    {% endif %}
+
 {% endblock %}
