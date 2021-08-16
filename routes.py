@@ -61,3 +61,8 @@ def login():
     response = make_response(redirect(f'{AUTH_URL}/?{urlencode(data)}'))
     response.set_cookie('spotify_auth_state', data['state'])
     return response
+
+# Handles logging out/switching accounts
+@app.route('/account', methods = ['POST', 'GET'])
+def account():
+    return redirect('https://accounts.spotify.com/en/logout')
