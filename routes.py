@@ -2,6 +2,9 @@
 from __main__ import app
 from flask import render_template, redirect, abort, request, session
 from flask.helpers import make_response
+from random import random, sample
+from datetime import date
+from json import dumps
 import requests
 from secrets import choice
 from string import ascii_letters, digits
@@ -29,7 +32,7 @@ def landing():
             form = form, 
             countries = country_ids.keys()
         )
-        
+
     # If not submitted, return the landing page with the form
     return render_template('landing.html', 
         form = form, 
@@ -63,7 +66,7 @@ def login():
         'response_type': 'code', 
         'redirect_uri': REDIRECT_URI, 
         'state': ''.join(choice(ascii_letters + digits) for _ in range(16)), 
-        'scope': 'user-read-private user-read-email', 
+        'scope': 'user-read-private user-read-email playlist-modify-public', 
         'show_dialog': True
     }
     
@@ -86,14 +89,13 @@ def callback():
         return redirect('/')
     
     # Request access and refresh tokens
-    data = {
-        'grant_type': 'authorization_code',
-        'code': request.args.get('code'),
-        'redirect_uri': REDIRECT_URI,
-    }
     response = requests.post(TOKEN_URL, 
         auth = (CLIENT_ID, CLIENT_SECRET), 
-        data = data
+        data = {
+            'grant_type': 'authorization_code',
+            'code': request.args.get('code'),
+            'redirect_uri': REDIRECT_URI,
+        }
     )
     response_data = response.json()
 
@@ -104,4 +106,24 @@ def callback():
     # Add the tokens to session, redirect to generate()
     session['access_token'] = response_data.get('access_token')
     session['refresh_token'] = response_data.get('refresh_token')
-    return redirect('/generate')
+    return redirect('/generate=' + session['Country'])
+
+# Function to help generate the playlist
+@app.route('/generate=<place>', methods = ['POST', 'GET'])
+def generate(place):
+    # If a token can't be found, abort
+    if 'access_token' not in session or 'refresh_token' not in session:
+        abort(400)
+    
+    # Get Top 50 playlist of track ids for the desired country
+    headers: dict[str] = {'Authorization': f'Bearer {session["access_token"]}'}
+    top_50 = requests.get(PLAYLISTS_URL + country_ids[session['Country']], 
+        headers = headers, 
+        params = {'fields': 'tracks.items(track(id))'}
+    )
+
+    # If the request is not successful, abort
+    if top_50.status_code != 200:
+        abort(top_50.status_code)
+
+    return render_template('generate.html')
