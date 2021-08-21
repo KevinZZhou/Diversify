@@ -144,4 +144,21 @@ def generate(place):
         entry['uri'] for entry in recommendations.json()['tracks']
     ]
 
+    # Get Spotify account user id
+    user_id: str = requests.get(ME_URL, headers = headers).json()['id']
+
+    # Create an empty Spotify playlist
+    today: str = str(date.today().strftime('%Y-%m-%d'))
+    playlist_id: str = requests.post(USERS_URL + user_id + '/playlists', 
+        headers = headers, 
+        data = dumps({'name': f'Generated from {place} - {today}'})
+    ).json()['id']
+
+    # Add recommended songs to the created Spotify playlist
+    headers.update({'Content-Type': 'application/json'})
+    requests.post(PLAYLISTS_URL + playlist_id + '/tracks', 
+        headers = headers, 
+        data = dumps({'uris': recommended_songs})
+    )
+
     return render_template('generate.html')
