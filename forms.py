@@ -13,3 +13,6 @@ class GeneratePlaylistForm(FlaskForm):
 
 class AccountForm(FlaskForm):
     account = SubmitField('Switch Accounts')
+
+class LandingForm(FlaskForm):
+    landing = SubmitField('Go Back')
