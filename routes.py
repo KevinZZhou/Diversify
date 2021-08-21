@@ -115,6 +115,11 @@ def generate(place):
     if 'access_token' not in session or 'refresh_token' not in session:
         abort(400)
     
+    # Create form to redirect to landing page
+    form: FlaskForm = LandingForm()
+    if form.validate_on_submit():
+        return redirect('/')
+
     # Get Top 50 playlist of track ids for the desired country
     headers: dict[str] = {'Authorization': f'Bearer {session["access_token"]}'}
     top_50 = requests.get(PLAYLISTS_URL + country_ids[session['Country']], 
@@ -161,4 +166,8 @@ def generate(place):
         data = dumps({'uris': recommended_songs})
     )
 
-    return render_template('generate.html')
+    return render_template('generate.html', 
+        form = form, 
+        country = place, 
+        playlist_embed = EMBED_URL + playlist_id, 
+    )
