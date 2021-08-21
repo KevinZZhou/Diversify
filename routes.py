@@ -125,5 +125,23 @@ def generate(place):
     # If the request is not successful, abort
     if top_50.status_code != 200:
         abort(top_50.status_code)
+    
+    # Get 5 random songs from the Top 50 playlist
+    song_ids: list[str] = [
+        entry['track']['id'] for entry in top_50.json()['tracks']['items']
+    ]
+    random_five: list[str] = sample(song_ids, 5)
+
+    # Get recommendations based on the 5 randomly selected songs as a seed
+    recommendations = requests.get(RECOMMENDATIONS_URL, 
+        headers = headers, 
+        params = {
+            'limit': '50', 
+            'seed_tracks': random_five,
+        }
+    )
+    recommended_songs: list[str] = [
+        entry['uri'] for entry in recommendations.json()['tracks']
+    ]
 
     return render_template('generate.html')
