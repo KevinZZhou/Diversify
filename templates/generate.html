@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %} 
+    Playlist generated from {{ country }}
+{% endblock %}
+
+{% block content %}
+    <h4> {{ country }} </h4>
+    <iframe class = 'country-top-50' src = '{{ playlist_embed }}'
+        width = '50%' height = '320' frameBorder = '0' 
+        allowtransparency = 'true' allow = 'encrypted-media'>
+    </iframe>
+    <form action = '{{ url_for("generate", place = country) }}' method = 'POST'>
+        {{ form.landing }}
+        {{ form.csrf_token }}
+    </form> 
+{% endblock %}
