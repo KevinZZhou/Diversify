@@ -2,10 +2,11 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField, SubmitField
 from wtforms.validators import InputRequired
 import os
+from json import loads
 
 class CountryForm(FlaskForm):
     country = SelectField('Country', validators = [InputRequired()], 
-        choices = dict(os.environ['COUNTRY_IDS']).keys())
+        choices = loads(os.environ['COUNTRY_IDS']).keys())
     submit = SubmitField('Submit')
 
 class GeneratePlaylistForm(FlaskForm):
