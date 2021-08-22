@@ -5,11 +5,11 @@ from flask.helpers import make_response
 from random import random, sample
 from datetime import date
 from json import dumps
+import os
 import requests
 from secrets import choice
 from string import ascii_letters, digits
 from urllib.parse import urlencode
-from config import *
 from forms import *
 
 
@@ -30,13 +30,13 @@ def landing():
         return render_template('landing.html', 
             alert = True, 
             form = form, 
-            countries = country_ids.keys()
+            countries = dict(os.environ['COUNTRY_IDS']).keys(),
         )
 
     # If not submitted, return the landing page with the form
     return render_template('landing.html', 
         form = form, 
-        countries = country_ids.keys(),
+        countries = dict(os.environ['COUNTRY_IDS']).keys(),
     )
 
 # Page displaying the Top 50 playlist for a particular country
@@ -52,7 +52,8 @@ def country(place):
             generate = generate, 
             account = account, 
             country = place, 
-            country_embed = EMBED_URL + country_ids[place]
+            country_embed = os.environ['EMBED_URL'] + 
+                dict(os.environ['COUNTRY_IDS'])[place]
         )
     except KeyError:
         abort(404)
@@ -62,16 +63,17 @@ def country(place):
 def login():
     # Query to be sent for authorization
     data = {
-        'client_id': CLIENT_ID, 
+        'client_id': os.environ['CLIENT_ID'], 
         'response_type': 'code', 
-        'redirect_uri': REDIRECT_URI, 
+        'redirect_uri': os.environ['REDIRECT_URI'], 
         'state': ''.join(choice(ascii_letters + digits) for _ in range(16)), 
         'scope': 'user-read-private user-read-email playlist-modify-public', 
         'show_dialog': True
     }
     
     # Send the authorization request to Spotify
-    response = make_response(redirect(f'{AUTH_URL}/?{urlencode(data)}'))
+    auth_url: str = os.environ['AUTH_URL']
+    response = make_response(redirect(f'{auth_url}/?{urlencode(data)}'))
     response.set_cookie('spotify_auth_state', data['state'])
     return response
 
@@ -89,12 +91,12 @@ def callback():
         return redirect('/')
     
     # Request access and refresh tokens
-    response = requests.post(TOKEN_URL, 
-        auth = (CLIENT_ID, CLIENT_SECRET), 
+    response = requests.post(os.environ['TOKEN_URL'], 
+        auth = (os.environ['CLIENT_ID'], os.environ['CLIENT_SECRET']), 
         data = {
             'grant_type': 'authorization_code',
             'code': request.args.get('code'),
-            'redirect_uri': REDIRECT_URI,
+            'redirect_uri': os.environ['REDIRECT_URI'],
         }
     )
     response_data = response.json()
@@ -122,7 +124,8 @@ def generate(place):
 
     # Get Top 50 playlist of track ids for the desired country
     headers: dict[str] = {'Authorization': f'Bearer {session["access_token"]}'}
-    top_50 = requests.get(PLAYLISTS_URL + country_ids[session['Country']], 
+    top_50 = requests.get(os.environ['PLAYLISTS_URL'] + 
+        dict(os.environ['COUNTRY_IDS'])[session['Country']], 
         headers = headers, 
         params = {'fields': 'tracks.items(track(id))'}
     )
@@ -138,7 +141,7 @@ def generate(place):
     random_five: list[str] = sample(song_ids, 5)
 
     # Get recommendations based on the 5 randomly selected songs as a seed
-    recommendations = requests.get(RECOMMENDATIONS_URL, 
+    recommendations = requests.get(os.environ['RECOMMENDATIONS_URL'], 
         headers = headers, 
         params = {
             'limit': '50', 
@@ -150,18 +153,21 @@ def generate(place):
     ]
 
     # Get Spotify account user id
-    user_id: str = requests.get(ME_URL, headers = headers).json()['id']
+    user_id: str = requests.get(os.environ['ME_URL'], 
+        headers = headers
+    ).json()['id']
 
     # Create an empty Spotify playlist
     today: str = str(date.today().strftime('%Y-%m-%d'))
-    playlist_id: str = requests.post(USERS_URL + user_id + '/playlists', 
+    playlist_id: str = requests.post(os.environ['USERS_URL'] + 
+        user_id + '/playlists', 
         headers = headers, 
         data = dumps({'name': f'Generated from {place} - {today}'})
     ).json()['id']
 
     # Add recommended songs to the created Spotify playlist
     headers.update({'Content-Type': 'application/json'})
-    requests.post(PLAYLISTS_URL + playlist_id + '/tracks', 
+    requests.post(os.environ['PLAYLISTS_URL'] + playlist_id + '/tracks', 
         headers = headers, 
         data = dumps({'uris': recommended_songs})
     )
@@ -169,5 +175,5 @@ def generate(place):
     return render_template('generate.html', 
         form = form, 
         country = place, 
-        playlist_embed = EMBED_URL + playlist_id, 
+        playlist_embed = os.environ['EMBED_URL'] + playlist_id, 
     )
