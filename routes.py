@@ -4,7 +4,7 @@ from flask import render_template, redirect, abort, request, session
 from flask.helpers import make_response
 from random import random, sample
 from datetime import date
-from json import dumps
+from json import dumps, loads
 import os
 import requests
 from secrets import choice
@@ -30,13 +30,13 @@ def landing():
         return render_template('landing.html', 
             alert = True, 
             form = form, 
-            countries = dict(os.environ['COUNTRY_IDS']).keys(),
+            countries = loads(os.environ['COUNTRY_IDS']).keys(),
         )
 
     # If not submitted, return the landing page with the form
     return render_template('landing.html', 
         form = form, 
-        countries = dict(os.environ['COUNTRY_IDS']).keys(),
+        countries = loads(os.environ['COUNTRY_IDS']).keys(),
     )
 
 # Page displaying the Top 50 playlist for a particular country
@@ -53,7 +53,7 @@ def country(place):
             account = account, 
             country = place, 
             country_embed = os.environ['EMBED_URL'] + 
-                dict(os.environ['COUNTRY_IDS'])[place]
+                loads(os.environ['COUNTRY_IDS'])[place]
         )
     except KeyError:
         abort(404)
@@ -125,7 +125,7 @@ def generate(place):
     # Get Top 50 playlist of track ids for the desired country
     headers: dict[str] = {'Authorization': f'Bearer {session["access_token"]}'}
     top_50 = requests.get(os.environ['PLAYLISTS_URL'] + 
-        dict(os.environ['COUNTRY_IDS'])[session['Country']], 
+        loads(os.environ['COUNTRY_IDS'])[session['Country']], 
         headers = headers, 
         params = {'fields': 'tracks.items(track(id))'}
     )
