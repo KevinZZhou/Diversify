@@ -1,12 +1,12 @@
 # Imports
 from flask import Flask
-from config import SECRET_KEY, SQLALCHEMY_DATABASE_URI
+import os
 
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = SECRET_KEY
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 
 # Import models and routes
 from models import db
