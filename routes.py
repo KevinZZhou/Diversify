@@ -1,5 +1,5 @@
 # Imports
-from __main__ import app
+from app import app
 from flask import render_template, redirect, abort, request, session
 from flask.helpers import make_response
 from random import random, sample
