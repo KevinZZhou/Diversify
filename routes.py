@@ -68,7 +68,6 @@ def login():
         'redirect_uri': os.environ['REDIRECT_URI'], 
         'state': ''.join(choice(ascii_letters + digits) for _ in range(16)), 
         'scope': 'user-read-private user-read-email playlist-modify-public', 
-        'show_dialog': True
     }
     
     # Send the authorization request to Spotify
