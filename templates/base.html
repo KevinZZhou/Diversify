@@ -6,19 +6,31 @@
         </title>
         <link rel = 'stylesheet' href = '{{ url_for(
             'static', filename = 'bootstrap/css/bootstrap.min.css') }}'>
+        <link rel = 'stylesheet' href = '{{ url_for(
+            'static', filename = 'css/styles.css') }}'>
     </head>
     <body>
-        <!--
-        <header>
-            <img id = 'logo' 
-                src = '{{ url_for('static', filename = 'color-wheel.svg') }}'/>
+        <header id = 'header'>
+            <div id = 'logo'>
+                <a href = '{{ url_for("landing") }}'>
+                    <img id = 'logo-image' 
+                        src = '{{ url_for('static', filename = 'color-wheel.svg') }}'/>
+                    <h5 id = 'logo-text'> Diversify </h5>
+                </a>
+            </div>
         </header>
-        -->
-        <div id = 'content'>
-            {% block content %} {% endblock %}
-        </div>
+        <main>
+            <div id = 'content'>
+                <div class = 'page-content'>
+                    {% block content %} {% endblock %}
+                </div>
+            </div>
+        </main>
+        <footer id = 'footer'>
+            <p id = 'footer-text'> Created by Kevin. </p>
+        </footer>
     </body>
     <script src = '{{ url_for(
-        'static', filename = 'bootstrap/css/bootstrap.min.css') }}'>
+        'static', filename = 'bootstrap/js/bootstrap.js') }}'>
     </script>
 </html>
