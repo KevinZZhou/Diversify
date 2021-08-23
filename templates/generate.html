@@ -5,11 +5,21 @@
 {% endblock %}
 
 {% block content %}
-    <h4> {{ country }} </h4>
-    <iframe class = 'country-top-50' src = '{{ playlist_embed }}'
-        width = '50%' height = '320' frameBorder = '0' 
+    <p>
+        Here's the Spotify playlist generated from 5 randomly selected songs 
+        from the current {{ country }} Top 50!
+    </p>
+
+    <p>
+        This custom playlist has also been created in your Spotify account!
+    </p>
+
+    <iframe class = 'spotify-playlist' src = '{{ playlist_embed }}'
         allowtransparency = 'true' allow = 'encrypted-media'>
-    </iframe>
+    </iframe><br>
+
+    </h6> Click here to return to the home page! </h6>
+
     <form action = '{{ url_for("generate", place = country) }}' method = 'POST'>
         {{ form.landing }}
         {{ form.csrf_token }}
