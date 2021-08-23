@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+
+* {
+    color: black;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    text-decoration: none !important;
+}
+
+body {
+    display: grid;
+    height: 100vh;
+    min-height: 500px;
+    grid-template-rows: auto 1fr auto;
+    background-color: snow;
+}
+
+header {
+    max-height: 4em;
+    text-align: center;
+}
+
+#logo {
+    display: inline-block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+}
+
+#logo-image {
+    max-height: 2em;
+}
+
+#logo-text {
+    font-family: 'Righteous', sans-serif;
+    display: inline-block;
+    vertical-align: sub;
+    width: auto;
+}
+
+#content {
+    font-family: 'Nunito', sans-serif;
+    display: grid;
+    place-items: center;
+    min-height: 100%;
+    text-align: center;
+}
+
+#footer {
+    font-family: 'Nunito', sans-serif;
+    text-align: center;
+    margin-top: 1em;
+}
+
+.page-content {
+    width: clamp(30ch, 90%, 60ch);
+    display: flex;
+    flex-direction: column;
+    border: 0.25em solid whitesmoke;
+    border-radius: 2em;
+    padding: 2rem;
+}
+
+.spotify-playlist {
+    width: 100%;
+    height: 330px;
+}
