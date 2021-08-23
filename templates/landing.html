@@ -1,15 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %} Discovering World Music {% endblock %}
+{% block title %} 
+    Discovering World Music 
+{% endblock %}
 
 {% block content %}
+    <p>
+        Diversify is a web app designed to introduce users to what music is 
+        popular around the world. It uses the Spotify API to obtain the 
+        current Top 50 songs from a variety of different countries and 
+        create playlists accordingly.
+    </p><br>
+
+    <h6>
+        Select a country below:
+    </h6>
+
     <form action = '{{ url_for("landing") }}' method = 'POST'>
-        {{ form.country.label }}: {{ form.country }} {{ form.submit }}
+        {{ form.country.label }}: {{ form.country }} 
+        <br>
+        {{ form.submit }}
         {{ form.csrf_token }}
     </form> 
 
     {% if alert %}
-        <div class = 'alert alert-warning alert-dismissible fade show' role = 'alert'>
+        <br>
+        <div class = 'alert alert-warning' role = 'alert'>
             Grant access to Diversify in your Spotify account next time, and we 
             can generate a playlist for you!
         </div>
