@@ -1,25 +1,23 @@
 {% extends "base.html" %}
 
 {% block title %} 
-    {% if country == 'Global' %}
-        {{ country }} Music 
-    {% else %}
-        {{ country }}'s Music 
-    {% endif %}
+    {{ country }} Spotify Top 50
 {% endblock %}
 
 {% block content %}
     <h4> {{ country }} </h4>
-    <iframe class = 'country-top-50' src = '{{ country_embed }}'
-        width = '50%' height = '320' frameBorder = '0' 
+
+    <iframe class = 'spotify-playlist' src = '{{ country_embed }}'
         allowtransparency = 'true' allow = 'encrypted-media'>
-    </iframe>
-    <br>
-    </h6> Create a new playlist based on this Top 50! </h6>
+    </iframe><br>
+
+    </h6> Create a new Spotify playlist from this Top 50! </h6>
+
     <form action = '{{ url_for("login") }}' method = 'POST'>
         {{ generate.generate }}
         {{ generate.csrf_token }}
-    </form> 
+    </form>
+
     <form action = '{{ url_for("account") }}' target = '_blank' method = 'POST'>
         {{ account.account }}
         {{ account.csrf_token }}
