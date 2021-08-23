@@ -76,5 +76,5 @@ header {
 }
 
 .form-text {
-    color: black;
+    color: black !important;
 }
