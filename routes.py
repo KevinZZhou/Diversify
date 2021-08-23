@@ -105,27 +105,23 @@ def callback():
     if response.status_code != 200:
         abort(response.status_code)
     
-    # Add the tokens to session, redirect to generate()
+    # Add the tokens to session, generate playlist in generate_playlist()
+    # Redirect to generate()
     session['access_token'] = response_data.get('access_token')
     session['refresh_token'] = response_data.get('refresh_token')
+    session['playlist_id'] = generate_playlist(session['Country'])
     return redirect('/generate=' + session['Country'])
 
-# Function to help generate the playlist
-@app.route('/generate=<place>', methods = ['POST', 'GET'])
-def generate(place):
+# Helper function to generate the playlist and return the playlist embed link
+def generate_playlist(place: str) -> str:
     # If a token can't be found, abort
     if 'access_token' not in session or 'refresh_token' not in session:
         abort(400)
-    
-    # Create form to redirect to landing page
-    form: FlaskForm = LandingForm()
-    if form.validate_on_submit():
-        return redirect('/')
 
     # Get Top 50 playlist of track ids for the desired country
     headers: dict[str] = {'Authorization': f'Bearer {session["access_token"]}'}
     top_50 = requests.get(os.environ['PLAYLISTS_URL'] + 
-        loads(os.environ['COUNTRY_IDS'])[session['Country']], 
+        loads(os.environ['COUNTRY_IDS'])[place], 
         headers = headers, 
         params = {'fields': 'tracks.items(track(id))'}
     )
@@ -172,8 +168,18 @@ def generate(place):
         data = dumps({'uris': recommended_songs})
     )
 
+    return playlist_id
+
+# Function to help generate the playlist
+@app.route('/generate=<place>', methods = ['POST', 'GET'])
+def generate(place):
+    # Create form to redirect to landing page
+    form: FlaskForm = LandingForm()
+    if form.validate_on_submit():
+        return redirect('/')
+
     return render_template('generate.html', 
         form = form, 
         country = place, 
-        playlist_embed = os.environ['EMBED_URL'] + playlist_id, 
+        playlist_embed = os.environ['EMBED_URL'] + session['playlist_id'], 
     )
