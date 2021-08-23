@@ -14,12 +14,12 @@
     </h6> Create a new Spotify playlist from this Top 50! </h6>
 
     <form action = '{{ url_for("login") }}' method = 'POST'>
-        {{ generate.generate }}
+        {{ generate.generate(class_ = 'form-text') }}
         {{ generate.csrf_token }}
     </form>
 
     <form action = '{{ url_for("account") }}' target = '_blank' method = 'POST'>
-        {{ account.account }}
+        {{ account.account(class_ = 'form-text') }}
         {{ account.csrf_token }}
     </form> 
 {% endblock %}

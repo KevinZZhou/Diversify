@@ -21,7 +21,7 @@
     </h6> Click here to return to the home page! </h6>
 
     <form action = '{{ url_for("generate", place = country) }}' method = 'POST'>
-        {{ form.landing }}
+        {{ form.landing(class_ = 'form-text') }}
         {{ form.csrf_token }}
     </form> 
 {% endblock %}
